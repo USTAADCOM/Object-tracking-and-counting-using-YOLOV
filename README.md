@@ -32,6 +32,7 @@ This repository contains the code for object detection, tracking, and counting u
 
 ## Download Models
   ```code
+  mkdir ./weights
   bash script/download_models.sh
 ```
 ## Run Flask Web App
