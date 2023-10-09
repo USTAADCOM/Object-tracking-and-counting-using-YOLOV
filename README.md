@@ -54,52 +54,16 @@ Response
 {
     "object1": {
         "confidence": 0.9,
-        "object": "toilet",
+        "object": "person",
         "shape_box": [
             580,
             540,
             890,
             878
         ]
-    },
-    "object2": {
-        "confidence": 0.7,
-        "object": "sink",
-        "shape_box": [
-            148,
-            541,
-            560,
-            751
-        ]
-    },
-    "object3": {
-        "confidence": 0.4,
-        "object": "bottle",
-        "shape_box": [
-            1032,
-            281,
-            1068,
-            352
-        ]
-    },
-    "object4": {
-        "confidence": 0.29,
-        "object": "bottle",
-        "shape_box": [
-            1065,
-            273,
-            1094,
-            350
-        ]
     }
 }
 ```
- <div align="center">
-<p>
-<img src="assets/detect.jpg" width="300"/>
-</p>
-</div>
-
 ###  http://127.0.0.1:5000/track_video 
 Payload
 ```code
