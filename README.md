@@ -24,19 +24,12 @@ This repository contains the code for object detection, tracking, and counting u
   ```code
   conda create -n <env_name> python==3.10
   conda activate <env_name>
-  git clone --recurse-submodules https://github.com/USTAADCOM/Object-tracking-and-counting-using-YOLOV.git
+  git clone https://github.com/USTAADCOM/Object-tracking-and-counting-using-YOLOV.git
   cd Object-tracking-and-counting-using-YOLOV
   pip install -r requirements.txt -q
   ```
 **Note** Make sure that all dependencies installed, including torch>=1.7.
 
-## Download Models
-  ```code
-  mkdir ./weights 
-  bash script/download_models.sh
-
-```
-### **Note** on windows execute mkdir weights 
 ## Run Flask Web App
 ```code
 python3 app.py 
