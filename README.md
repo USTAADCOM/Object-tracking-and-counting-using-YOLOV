@@ -1,9 +1,14 @@
 # Object-tracking-and-counting-using-YOLOV
 
-
+#### Video and Webcam Demo
 <div align="center">
 <p>
 <img src="assets/traffic.gif" width="300"/>  <img src="assets/output_1696816969211397.gif" width="300"/> 
+</p>
+</div>
+<div align="center">
+<p>
+<img src="assets/output_1696838504179469.gif" width="300"/> 
 </p>
 </div>
 
