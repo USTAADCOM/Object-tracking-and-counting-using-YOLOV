@@ -10,7 +10,9 @@ from werkzeug.utils import secure_filename
 from track_video_web import VideoCamera
 app = Flask(__name__)
 app.config['UPLOAD_EXTENSIONS'] = ['.mp4', '.avi']
-app.config['UPLOAD_PATH'] = 'form_uploads'
+upload_folder = 'form_uploads'
+os.makedirs(upload_folder, exist_ok = True)
+app.config['UPLOAD_PATH'] = upload_folder
 
 def gen_frames(videocamera_object):
     """

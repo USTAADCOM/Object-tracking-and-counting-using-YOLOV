@@ -13,7 +13,6 @@
 </div>
 
 
-
 ## Introduction
 
 This repository contains the code for object detection, tracking, and counting using the YOLOv8 algorithm by ultralytics for object detection and the SORT (Simple Online and Realtime Tracking) algorithm for object tracking. The project provides code for both procedural and object-oriented programming implementations in Python.
@@ -40,6 +39,15 @@ This repository contains the code for object detection, tracking, and counting u
 python3 app.py 
 ```
 # Object-tracking-and-counting-using-YOLOV API
+## Setup
+create .env and put your key
+```
+api-key = "your sceret key here"
+```
+## Run API
+```code
+python3 server.py 
+```
 ### http://127.0.0.1:5000/detect_image
 Payload
 ```code
@@ -52,18 +60,19 @@ Payload
 Response 
 ```code
 {
-    "object1": {
-        "confidence": 0.9,
-        "object": "person",
-        "shape_box": [
-            580,
-            540,
-            890,
-            878
-        ]
+    "output": {
+        "image_file": "Cloud storage path"
     }
 }
 ```
+#### Demo
+<div align="center">
+<p>
+<img src="assets/stock.jpg" width="300"/>  <img src="assets/1696923383705738.jpg" width="300"/> 
+</p>
+</div>
+
+
 ###  http://127.0.0.1:5000/track_video 
 Payload
 ```code
@@ -81,7 +90,21 @@ Response
     }
 }
 ```
-## Run API
+###  http://127.0.0.1:5000/image_prediction
+Payload
 ```code
-python3 server.py 
+{
+    "key": "data_file",
+    "type": "file",
+    "src": "image file path"
+}
 ```
+Response 
+```code
+{
+    "object1" :{
+        'shape_box' co ordinates: ,
+        'object' : object name,
+        'confidence' : probability
+    }
+}

@@ -20,8 +20,10 @@ import detect_image_objects
 app = Flask(__name__)
 cors = CORS(app)
 app.config['PROPAGATE_EXCEPTIONS'] = True
-upload_folder = 'api_uploads'
-os.makedirs(upload_folder, exist_ok = True)
+video_upload_folder = 'video_api_uploads'
+image_upload_folder = 'image_api_uploads'
+os.makedirs(video_upload_folder, exist_ok = True)
+os.makedirs(image_upload_folder, exist_ok = True)
 def authorize(token: str)-> bool:
     """
     method take header token as input and check valid ot not.
@@ -133,7 +135,7 @@ def save_file(request_api: Any)-> str:
 
     """
     data_f = request_api.files["data_file"]
-    data_f.save(os.path.join(upload_folder, data_f.filename))
+    data_f.save(os.path.join(image_upload_folder, data_f.filename))
 
 def make_bad_params_value_response()-> Response:
     """
@@ -257,7 +259,7 @@ def store_cloud_file(file_path: str)-> str:
     url = go.uploadFile(file_path)
     print("Download Link: ", url["downloadPage"])
     return url["downloadPage"]
-def save_video_file(request_api: Any)-> str:
+def save_video_file(request_api: Any, type: str)-> str:
     """
     method will take request and save file from request in specified folder.
 
@@ -265,25 +267,35 @@ def save_video_file(request_api: Any)-> str:
     ----------
     request_api: Request
         contain the request data in file format.
-
+    type: str
+        file type image or video.
     Return:
     ------
     save_file_path: str
         file path save on our local sever.
     """
-    video_f = request_api.files["data_file"]
+    data_f = request_api.files["data_file"]
     time_stamp_name = str(datetime.datetime.now().timestamp()).replace(".", "")
-    video_list = video_f.filename.split(".")
-    video_extension = video_list[len(video_list)-1]
-    save_file_path = f"{upload_folder}/{time_stamp_name}.{video_extension}"
-    file_name = f"{time_stamp_name}.{video_extension}"
-    video_f.save(save_file_path)
-    return save_file_path, file_name, time_stamp_name
+    data_list = data_f.filename.split(".")
+    data_extension = data_list[len(data_list)-1]
+    if type == "video":
+        save_file_path = f"{video_upload_folder}/{time_stamp_name}.{data_extension}"
+        file_name = f"{time_stamp_name}.{data_extension}"
+        data_f.save(save_file_path)
+        return save_file_path, file_name, time_stamp_name
+    os.chdir(image_upload_folder)
+    os.mkdir(time_stamp_name)
+    save_file_path = f"{time_stamp_name}/{time_stamp_name}.{data_extension}"
+    file_name = f"{time_stamp_name}.{data_extension}"
+    data_f.save(save_file_path)
+    os.chdir('../')
+    source_folder = f"{image_upload_folder}/{time_stamp_name}"
+    return source_folder, file_name, time_stamp_name
 
-@app.route('/detect_image', methods = ['POST'])
+@app.route('/image_prediction', methods = ['POST'])
 @token_required
 @cross_origin()
-def detect_object():
+def predicted_object():
     """
     method will take the image as input and return the objects detected 
     in image in a json format.
@@ -314,7 +326,47 @@ def detect_object():
         return make_bad_params_key_response()
     except Exception as exception:
         return exception
+@app.route('/detect_image', methods = ['POST'])
+@token_required
+@cross_origin()
+def detect_object():
+    """
+    method will take the image as input and return the objects detected 
+    image with detected objects.
 
+    Parameters:
+    ----------
+    None
+
+    Return:
+    ------
+    str
+        return the image with detected objects.
+
+    """
+    try:
+        if validate_request(request):
+            image_file = get_data(request)
+            if validate_extension(image_file):
+                source_folder, file_name, time_stamp = save_video_file(request,
+                                                                    "image")
+                os.system("python detect_and_bounding_box.py --weights yolov7.pt --conf 0.1 --source "+source_folder+ " --timestamp "+time_stamp)
+                print(r"runs/detect/"+time_stamp+"/"+file_name)
+                file_url = store_cloud_file(r"runs/detect/"+time_stamp+"/"+file_name)
+                output_dict = {}
+                output = {
+                'image_file' : file_url
+                }
+                output_dict["output"] = output
+                return Response(
+                    json.dumps(output_dict),
+                    mimetype = 'application/json'
+                    )
+            return make_invalid_extension_response()
+        return make_bad_params_key_response()
+    except Exception as exception:
+        return exception
+    
 @app.route('/track_video', methods = ['POST'])
 @token_required
 @cross_origin()
@@ -336,7 +388,8 @@ def track_object():
     try:
         if validate_request(request):
             if validate_video_extension(request):
-                video_path, file_name, time_stamp = save_video_file(request)
+                video_path, file_name, time_stamp = save_video_file(request,
+                                                                    "video")
                 os.system("python track_video.py --source "+video_path+ " --yolo-weights weights/yolov5n.pt --save-txt --save-vid --count  --time-stamp "+time_stamp)
                 print(r"results/output_"+file_name)
                 file_url = store_cloud_file(r"results/output_"+file_name)
