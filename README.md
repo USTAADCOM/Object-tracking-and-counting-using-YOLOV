@@ -33,7 +33,9 @@ This repository contains the code for object detection, tracking, and counting u
   pip install -r requirements.txt -q
   ```
 **Note** Make sure that all dependencies installed, including torch>=1.7.
-
+## Downloaad Model
+* Download (yolov7.pt)[] from releases
+* Put in weights folder
 ## Run Flask Web App
 ```code
 python3 app.py 
