@@ -14,9 +14,8 @@ from flask import (
     json, make_response, Response
 )
 from flask_cors import CORS, cross_origin
-from PIL import Image
+from detect_image_objects import main
 # Module
-import detect_image_objects
 app = Flask(__name__)
 cors = CORS(app)
 app.config['PROPAGATE_EXCEPTIONS'] = True
@@ -119,23 +118,6 @@ def get_data(request_api: Any)-> str:
     """
     data_file = request_api.files["data_file"]
     return data_file
-
-def save_file(request_api: Any)-> str:
-    """
-    method will take request and save data from request in specified folder.
-
-    Parameters:
-    ----------
-    request_api: Request
-        contain the request data in file format.
-
-    Return:
-    ------
-    None
-
-    """
-    data_f = request_api.files["data_file"]
-    data_f.save(os.path.join(image_upload_folder, data_f.filename))
 
 def make_bad_params_value_response()-> Response:
     """
@@ -314,10 +296,9 @@ def predicted_object():
         if validate_request(request):
             image_file = get_data(request)
             if validate_extension(image_file):
-                save_file(request)
-                boxes_data = detect_image_objects.detect_objects_on_image(Image.
-                                                    open(image_file.
-                                                        stream))
+                source_folder, file_name, time_stamp = save_video_file(request,
+                                                                    "image")
+                boxes_data = main(source_folder)
                 return Response(
                     json.dumps(boxes_data),
                     mimetype = 'application/json'
@@ -350,7 +331,7 @@ def detect_object():
             if validate_extension(image_file):
                 source_folder, file_name, time_stamp = save_video_file(request,
                                                                     "image")
-                os.system("python detect_and_bounding_box.py --weights yolov7.pt --conf 0.1 --source "+source_folder+ " --timestamp "+time_stamp)
+                os.system("python detect_and_bounding_box.py --weights weights/yolov7.pt --conf 0.1 --source "+source_folder+ " --timestamp "+time_stamp)
                 print(r"runs/detect/"+time_stamp+"/"+file_name)
                 file_url = store_cloud_file(r"runs/detect/"+time_stamp+"/"+file_name)
                 output_dict = {}

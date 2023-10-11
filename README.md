@@ -105,9 +105,12 @@ Payload
 Response 
 ```code
 {
-    "object1" :{
-        'shape_box' co ordinates: ,
-        'object' : object name,
-        'confidence' : probability
+    "ouptut": {
+        "class 1": count,
+        "class 2": count,
+        "class 3": count,
+        .
+        .
+        "class n": count,    
     }
 }
