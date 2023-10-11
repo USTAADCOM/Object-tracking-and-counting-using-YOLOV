@@ -34,7 +34,8 @@ This repository contains the code for object detection, tracking, and counting u
   ```
 **Note** Make sure that all dependencies installed, including torch>=1.7.
 ## Downloaad Model
-* Download (yolov7.pt)[] from releases
+* Download [yolov7.pt](https://github.com/USTAADCOM/Object-tracking-and-counting-using-YOLOV/releases/download/v1.1/yolov7.pt)
+from releases
 * Put in weights folder
 ## Run Flask Web App
 ```code
